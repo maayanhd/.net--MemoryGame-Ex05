@@ -17,6 +17,8 @@ namespace Ex05.GameLogic
         private List<Cell> m_AvailableCards = null;
         private Dictionary<int, List<Location>> m_SeenCards = null;
 
+        public event Action<PostGameInfo> GameEnded;
+        
         public Game(int[] i_Measurements, List<int> io_Cards, string[] i_Names, Player.ePlayerType[] i_PlayerTypes)
         {
             m_Board = new Cell[i_Measurements[k_HeightIndex], i_Measurements[k_WidthIndex]];
@@ -61,6 +63,11 @@ namespace Ex05.GameLogic
                 AvailableCards.Remove(i_PairOfCards[0]);
                 AvailableCards.Remove(i_PairOfCards[1]);
             }
+
+            if(AvailableCards.Count == 0)
+            {
+                OnGameEnded();
+            }
         }
 
         public void UpdateSeenCards(bool i_IsAMatch, params Cell[] i_PairOfCards)
@@ -88,16 +95,14 @@ namespace Ex05.GameLogic
             }
             else
             {
-                 SeenCards.Add(i_CardToAdd.CellContent, new List<Location>());
+                SeenCards.Add(i_CardToAdd.CellContent, new List<Location>());
                 SeenCards[i_CardToAdd.CellContent].Add(i_CardToAdd.Location);
             }
         }
 
-        public bool IsLocationInRange(Location i_LocationToCheck)
+        public Cell GetCellByLocation(Location i_CardLocation)
         {
-            bool rowInRange = i_LocationToCheck.Row < m_Board.GetLength(k_HeightIndex) && i_LocationToCheck.Row >= 0;
-            bool colInRange = i_LocationToCheck.Col < m_Board.GetLength(k_WidthIndex) && i_LocationToCheck.Col >= 0;
-            return rowInRange && colInRange;
+            return m_Board[i_CardLocation.Row, i_CardLocation.Col];
         }
 
         public bool IsThereAMatch(Player io_CurrentPlayer, params Cell[] i_Cards)
@@ -171,6 +176,16 @@ namespace Ex05.GameLogic
             }
         }
 
+        internal void OnGameEnded()
+        {
+            if(GameEnded != null)
+            {
+                bool isDraw = Player1.Score == Player2.Score;
+                Player winner = Player1.Score >= Player2.Score ? Player1 : Player2;
+
+                GameEnded.Invoke(new PostGameInfo(winner,isDraw));
+            }
+        }
         public Dictionary<int, List<Location>> SeenCards
         {
             get

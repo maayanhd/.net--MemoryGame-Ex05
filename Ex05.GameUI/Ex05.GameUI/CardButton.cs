@@ -18,6 +18,14 @@ namespace Ex05.GameUI
         {
             m_CardLocation = i_CardLocation;
         }
+
+        public Location? CardLocation
+        {
+            get
+            {
+                return m_CardLocation;
+            }
+        }
     }
 
 

@@ -11,18 +11,54 @@ namespace Ex05.GameUI
 
     internal static class UI
     {
-        public static void StartGame()
+        public static void Run()
         {
+            bool IsGameStillOn = true;
+            while(IsGameStillOn == true)
+            {
+                StartNewGame(out IsGameStillOn);
+
+            }
+
+        }
+        public static void StartNewGame(out bool o_IsTheGameStillOn)
+        {
+
+            DialogResult dialogRes;
+            o_IsTheGameStillOn = false;
             FormSettings settingsForm = new FormSettings();
             ShowFormSetting(settingsForm);
-            settingsForm.GetBoardMeasurements(out int[] boardMeasurements);
-            List<int> memoryCards = GenerateMemoryCards(boardMeasurements[0] * boardMeasurements[1]);
-            Game currentGame = new Game(boardMeasurements, memoryCards, GetPlayerNamesFromForm(settingsForm),GetPlayerTypesFromForm(settingsForm));
+            dialogRes = settingsForm.DialogResult;
+            if(dialogRes != DialogResult.Cancel)
+            {
+                settingsForm.GetBoardMeasurements(out int[] boardMeasurements);
+                List<int> memoryCards = GenerateMemoryCards(boardMeasurements[0] * boardMeasurements[1]);
+                Game currentGame = new Game(
+                    boardMeasurements,
+                    memoryCards,
+                    GetPlayerNamesFromForm(settingsForm),
+                    GetPlayerTypesFromForm(settingsForm));
 
-            FormMemoryGame formMemoryGame = new FormMemoryGame(currentGame);
-            ShowGameForm(formMemoryGame);
+                FormMemoryGame formMemoryGame = new FormMemoryGame(currentGame);
+                ShowGameForm(formMemoryGame);
+                dialogRes = formMemoryGame.DialogResult;
+                if(dialogRes != DialogResult.Cancel)
+                {
+                    o_IsTheGameStillOn = AskIfKeepPlaying();
+                }
+            }
+
         }
 
+        public static bool AskIfKeepPlaying()
+        {
+            bool keepPlaying = false;
+
+            DialogResult dialogRes = MessageBox.Show("Do you wish to play again?", "Memory Game - Rematch", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            keepPlaying = dialogRes == DialogResult.Yes;
+
+            return keepPlaying;
+        }
         public static GameLogic.Player.ePlayerType[] GetPlayerTypesFromForm(FormSettings i_FormSettings)
         {
             GameLogic.Player.ePlayerType[] playerTypes = new Player.ePlayerType[2];

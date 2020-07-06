@@ -151,6 +151,7 @@ namespace Ex05.GameUI
             }
             else
             {
+                this.DialogResult = DialogResult.OK;
                 this.Close();
             }
         }
