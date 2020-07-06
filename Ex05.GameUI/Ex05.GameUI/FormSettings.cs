@@ -25,6 +25,7 @@ namespace Ex05.GameUI
 
           private void InitializeComponent()
           {
+               this.StartPosition = FormStartPosition.CenterScreen;
                this.m_LabelFirstPlayerName = new System.Windows.Forms.Label();
                this.m_LabelSecondPlayerName = new System.Windows.Forms.Label();
                this.m_LabelBoardSize = new System.Windows.Forms.Label();
@@ -92,7 +93,7 @@ namespace Ex05.GameUI
                this.m_ButtonStart.TabIndex = 4;
                this.m_ButtonStart.Text = "Start!";
                this.m_ButtonStart.UseVisualStyleBackColor = false;
-               //this.m_ButtonStart.Click += new System.EventHandler(this.m_ButtonStart_Click);
+               this.m_ButtonStart.Click += m_ButtonStart_Click;
                // 
                // m_TextBoxFirstPlayerName
                // 
@@ -141,8 +142,20 @@ namespace Ex05.GameUI
                this.ResumeLayout(false);
                this.PerformLayout();
           }
-          
-          private void m_ButtonAgainstSecondPlayer_Click(object sender, EventArgs e)
+
+        private void m_ButtonStart_Click(object sender, EventArgs e)
+        {
+            if(m_TextBoxFirstPlayerName.Text == string.Empty || m_TextBoxSecondPlayerName.Text == string.Empty)
+            {
+                MessageBox.Show("Name field cannot be empty", "Cannot start the game", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                this.Close();
+            }
+        }
+
+        private void m_ButtonAgainstSecondPlayer_Click(object sender, EventArgs e)
           {
                SetSecondPlayerTypeButton();
                UpdateButtonAgainstSecondPlayerStatus();
@@ -187,11 +200,31 @@ namespace Ex05.GameUI
                // Enabling the text box made for the name of the second player
                this.m_TextBoxSecondPlayerName.Enabled = true;
           }
-          
-          internal void GetBoardMeasurements(out int o_Height, out int o_Width)
+
+          internal string Player1Name
           {
-               o_Height = int.Parse(m_ButtonBoardSizeOptions.Text[0].ToString());
-               o_Width  = int.Parse(m_ButtonBoardSizeOptions.Text[2].ToString());
+              get
+              {
+                  return m_TextBoxFirstPlayerName.Text;
+              }
           }
+
+          internal string Player2Name
+          {
+              get
+              {
+                  return m_TextBoxSecondPlayerName.Text;
+              }
+          }
+
+          internal void GetBoardMeasurements(out int[] o_BoardMeasurements)
+          {
+            o_BoardMeasurements = new int[2];
+            o_BoardMeasurements[0] = int.Parse(m_ButtonBoardSizeOptions.Text[0].ToString());
+            o_BoardMeasurements[1] = int.Parse(m_ButtonBoardSizeOptions.Text[m_ButtonBoardSizeOptions.Text.Length-1].ToString());
+          }
+
+
+
      }
 }
