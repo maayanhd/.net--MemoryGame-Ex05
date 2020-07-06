@@ -10,13 +10,14 @@ namespace Ex05.GameUI
      {
           private Label m_LabelFirstPlayerName;
           private Label m_LabelBoardSize;
-          private Button m_ButtonBoardSizeOptions;
+          private BoardSizeButton m_ButtonBoardSizeOptions;
           private Button m_ButtonStart;
-          private TextBox m_TextBoxFirstPlayerName;
-          private Button m_ButtonAgainstaFriend;
-          private TextBox m_TextBoxSecondPlayerName;
+          private PlayerNameTextBox m_TextBoxFirstPlayerName;
+          private Button m_ButtonAgainstSecondPlayer;
+          private PlayerNameTextBox m_TextBoxSecondPlayerName;
+          private ColorDialog colorDialog1;
           private Label m_LabelSecondPlayerName;
-
+                   
           public FormSettings(): base()
           {
                InitializeComponent();
@@ -27,11 +28,12 @@ namespace Ex05.GameUI
                this.m_LabelFirstPlayerName = new System.Windows.Forms.Label();
                this.m_LabelSecondPlayerName = new System.Windows.Forms.Label();
                this.m_LabelBoardSize = new System.Windows.Forms.Label();
-               this.m_ButtonBoardSizeOptions = new System.Windows.Forms.Button();
+               this.m_ButtonBoardSizeOptions = new BoardSizeButton();
                this.m_ButtonStart = new System.Windows.Forms.Button();
-               this.m_TextBoxFirstPlayerName = new System.Windows.Forms.TextBox();
-               this.m_ButtonAgainstaFriend = new System.Windows.Forms.Button();
-               this.m_TextBoxSecondPlayerName = new System.Windows.Forms.TextBox();
+               this.m_TextBoxFirstPlayerName = new PlayerNameTextBox();
+               this.m_ButtonAgainstSecondPlayer = new System.Windows.Forms.Button();
+               this.m_TextBoxSecondPlayerName = new PlayerNameTextBox();
+               this.colorDialog1 = new System.Windows.Forms.ColorDialog();
                this.SuspendLayout();
                // 
                // m_LabelFirstPlayerName
@@ -43,7 +45,6 @@ namespace Ex05.GameUI
                this.m_LabelFirstPlayerName.Size = new System.Drawing.Size(124, 17);
                this.m_LabelFirstPlayerName.TabIndex = 0;
                this.m_LabelFirstPlayerName.Text = "First Player Name:";
-               this.m_LabelFirstPlayerName.Click += new System.EventHandler(this.label1_Click);
                // 
                // m_LabelSecondPlayerName
                // 
@@ -54,7 +55,6 @@ namespace Ex05.GameUI
                this.m_LabelSecondPlayerName.Size = new System.Drawing.Size(145, 17);
                this.m_LabelSecondPlayerName.TabIndex = 1;
                this.m_LabelSecondPlayerName.Text = "Second Player Name:";
-               this.m_LabelSecondPlayerName.Click += new System.EventHandler(this.label2_Click);
                // 
                // m_LabelBoardSize
                // 
@@ -92,6 +92,7 @@ namespace Ex05.GameUI
                this.m_ButtonStart.TabIndex = 4;
                this.m_ButtonStart.Text = "Start!";
                this.m_ButtonStart.UseVisualStyleBackColor = false;
+               //this.m_ButtonStart.Click += new System.EventHandler(this.m_ButtonStart_Click);
                // 
                // m_TextBoxFirstPlayerName
                // 
@@ -102,13 +103,14 @@ namespace Ex05.GameUI
                // 
                // m_ButtonAgainstaFriend
                // 
-               this.m_ButtonAgainstaFriend.AutoSize = true;
-               this.m_ButtonAgainstaFriend.Location = new System.Drawing.Point(345, 49);
-               this.m_ButtonAgainstaFriend.Name = "m_ButtonAgainstaFriend";
-               this.m_ButtonAgainstaFriend.Size = new System.Drawing.Size(133, 27);
-               this.m_ButtonAgainstaFriend.TabIndex = 7;
-               this.m_ButtonAgainstaFriend.Text = "Against a Friend";
-               this.m_ButtonAgainstaFriend.UseVisualStyleBackColor = true;
+               this.m_ButtonAgainstSecondPlayer.AutoSize = true;
+               this.m_ButtonAgainstSecondPlayer.Location = new System.Drawing.Point(345, 49);
+               this.m_ButtonAgainstSecondPlayer.Name = "m_ButtonAgainstSecondPlayer";
+               this.m_ButtonAgainstSecondPlayer.Size = new System.Drawing.Size(133, 27);
+               this.m_ButtonAgainstSecondPlayer.TabIndex = 7;
+               this.m_ButtonAgainstSecondPlayer.Text = "Against a Friend";
+               this.m_ButtonAgainstSecondPlayer.UseVisualStyleBackColor = true;
+               this.m_ButtonAgainstSecondPlayer.Click += new System.EventHandler(this.m_ButtonAgainstSecondPlayer_Click);
                // 
                // m_TextBoxSecondPlayerName
                // 
@@ -124,10 +126,10 @@ namespace Ex05.GameUI
                // 
                this.ClientSize = new System.Drawing.Size(490, 197);
                this.Controls.Add(this.m_TextBoxSecondPlayerName);
-               this.Controls.Add(this.m_ButtonAgainstaFriend);
+               this.Controls.Add(this.m_ButtonAgainstSecondPlayer);
                this.Controls.Add(this.m_TextBoxFirstPlayerName);
                this.Controls.Add(this.m_ButtonStart);
-               this.Controls.Add(this.m_ButtonBoardSizeOptions);
+               this.Controls.Add(this.m_ButtonBoardSizeOptions as Button);
                this.Controls.Add(this.m_LabelBoardSize);
                this.Controls.Add(this.m_LabelSecondPlayerName);
                this.Controls.Add(this.m_LabelFirstPlayerName);
@@ -136,25 +138,60 @@ namespace Ex05.GameUI
                this.MinimizeBox = false;
                this.Name = "FormSettings";
                this.Text = "Memory Game - Settings";
-               this.Load += new System.EventHandler(this.FormSettings_Load);
                this.ResumeLayout(false);
                this.PerformLayout();
+          }
+          
+          private void m_ButtonAgainstSecondPlayer_Click(object sender, EventArgs e)
+          {
+               SetSecondPlayerTypeButton();
+               UpdateButtonAgainstSecondPlayerStatus();
+               UpdateSecondPlayerTextBox();
+          }
+
+          internal void UpdateSecondPlayerTextBox()
+          {
+               if (IsSecondPlayerComputer() == false)
+               {
+                    m_TextBoxSecondPlayerName.Text = string.Empty;
+               }
+               else 
+               {
+                    m_TextBoxSecondPlayerName.Text = "- computer -";
+               }
+          }
+          
+          internal void SetSecondPlayerTypeButton()
+          {
+               string rivalString = IsSecondPlayerComputer() ? "a Friend" : "Computer";
+               m_ButtonAgainstSecondPlayer.Text = String.Format("Against {0}", rivalString);
+          }
+
+          internal bool IsSecondPlayerComputer()
+          {
+               //Checking whether the second text box was enabled meaning human player
+               return m_TextBoxSecondPlayerName.Enabled ==  false && m_TextBoxSecondPlayerName.ReadOnly == true;
+          }
+
+          internal void UpdateButtonAgainstSecondPlayerStatus()
+          {
+               // Enabaling textbox in case of 2 human players and disabling in case of player vs computer option
+               m_TextBoxSecondPlayerName.Enabled = !m_TextBoxSecondPlayerName.Enabled;
+               m_TextBoxSecondPlayerName.ReadOnly = !m_TextBoxSecondPlayerName.ReadOnly;
 
           }
 
-          private void FormSettings_Load(object sender, EventArgs e)
+          internal void EnableSecondPlayerTextBox(Button o_ButtonAgainstaFriend)
           {
-
+               
+               // Enabling the text box made for the name of the second player
+               this.m_TextBoxSecondPlayerName.Enabled = true;
           }
-
-          private void label2_Click(object sender, EventArgs e)
+          
+          internal void GetBoardMeasurements(out int o_Height, out int o_Width)
           {
-
-          }
-
-          private void label1_Click(object sender, EventArgs e)
-          {
-
+               o_Height = int.Parse(m_ButtonBoardSizeOptions.Text[0].ToString());
+               o_Width  = int.Parse(m_ButtonBoardSizeOptions.Text[2].ToString());
           }
      }
 }

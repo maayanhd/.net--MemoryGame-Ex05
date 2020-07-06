@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
 
-namespace B20_Ex02
+namespace Ex05.GameLogic
 {
      public class Player
      {

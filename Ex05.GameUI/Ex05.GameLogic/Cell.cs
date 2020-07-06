@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace B20_Ex02
+namespace Ex05.GameLogic
 {
      public class Cell
      {
