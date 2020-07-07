@@ -7,23 +7,23 @@ namespace Ex05.GameLogic
     public class PostGameInfo
     {
         private readonly Player r_Winner;
-        private bool m_IsDraw;
+        private bool m_IsaDraw;
 
-        public PostGameInfo(Player i_GameWinner, bool i_IsDraw)
+        public PostGameInfo(Player i_GameWinner, bool i_IsaDraw)
         {
-            if(i_IsDraw == false)
+            if(i_IsaDraw == false)
             {
                 r_Winner = i_GameWinner;
             }
 
-            m_IsDraw = i_IsDraw;
+            m_IsaDraw = i_IsaDraw;
         }
 
-        public bool IsDraw
+        public bool IsaDraw
         {
             get
             {
-                return m_IsDraw;
+                return m_IsaDraw;
             }
         }
 

@@ -6,7 +6,6 @@ using System.Text;
 using System.Windows.Forms;
 using Ex05.GameLogic;
 
-
 namespace Ex05.GameUI
 {
     public class CardButton : Button
@@ -27,6 +26,4 @@ namespace Ex05.GameUI
             }
         }
     }
-
-
 }

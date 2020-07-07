@@ -20,7 +20,6 @@ namespace Ex05.GameLogic
             Computer
         }
 
-
         public Player(string i_PlayerName, ePlayerType i_ETypeOfPlayer)
         {
             r_Name = i_PlayerName;
@@ -98,7 +97,8 @@ namespace Ex05.GameLogic
                 chosenLocation[0] = resultMove[0].Location;
 
                 // and check if we saw available card that equals to the first 
-                if (i_CurrentGame.SeenCards.TryGetValue(resultMove[0].CellContent, out List<Location> seenMatches) && resultMove[0].Location.Equals(seenMatches[0]) == false)
+                if (i_CurrentGame.SeenCards.TryGetValue(resultMove[0].CellContent, out List<Location> seenMatches) &&
+                         resultMove[0].Location.Equals(seenMatches[0]) == false)
                 {
                     chosenLocation[1] = seenMatches[0];
                 }

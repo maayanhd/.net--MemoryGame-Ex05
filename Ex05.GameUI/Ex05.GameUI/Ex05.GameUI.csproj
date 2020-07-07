@@ -56,7 +56,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="UI.cs" />
+    <Compile Include="App.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ex05.GameLogic\Ex05.GameLogic.csproj">
