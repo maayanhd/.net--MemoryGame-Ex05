@@ -61,7 +61,7 @@ namespace Ex05.GameUI
                designForm();
           }
 
-          internal void AllocateControlsOfForm()
+          private void AllocateControlsOfForm()
           {
                this.m_LabelFirstPlayerName = new System.Windows.Forms.Label();
                this.m_LabelSecondPlayerName = new System.Windows.Forms.Label();
@@ -194,38 +194,43 @@ namespace Ex05.GameUI
 
           private void m_ButtonStart_Click(object sender, EventArgs e)
           {
-               if (m_TextBoxFirstPlayerName.Text == string.Empty || m_TextBoxSecondPlayerName.Text == string.Empty)
+              this.Close();               
+          }
+
+          private bool arePlayerNamesValid()
+          {
+               bool areThePlayerNamesValid = m_TextBoxFirstPlayerName.Text != string.Empty && m_TextBoxSecondPlayerName.Text != string.Empty;
+                
+               if (areThePlayerNamesValid == false)
                {
+                    // Notifying the user names aren't valid
                     MessageBox.Show("Name field cannot be empty", "Cannot start the game", MessageBoxButtons.OK, MessageBoxIcon.Error);
                }
-               else
-               {
-                    this.DialogResult = DialogResult.OK;
-                    this.Close();
-               }
+
+               return areThePlayerNamesValid;
           }
 
           private void m_ButtonAgainstSecondPlayer_Click(object sender, EventArgs e)
           {
-               SetSecondPlayerTypeButton();
-               UpdateButtonAgainstSecondPlayerStatus();
-               UpdateSecondPlayerTextBox();
+               setSecondPlayerTypeButton();
+               updateButtonAgainstSecondPlayerStatus();
+               updateSecondPlayerTextBox();
           }
 
-          private void SetSecondPlayerTypeButton()
+          private void setSecondPlayerTypeButton()
           {
-               string rivalString = IsSecondPlayerComputer() ? "a Friend" : "Computer";
+               string rivalString = IsSecondPlayerComputer() ? "Computer" : "a Friend";
                m_ButtonAgainstSecondPlayer.Text = string.Format("Against {0}", rivalString);
           }
 
-          private void UpdateButtonAgainstSecondPlayerStatus()
+          private void updateButtonAgainstSecondPlayerStatus()
           {
                // Enabaling textbox in case of 2 human players and disabling in case of player vs computer option
                m_TextBoxSecondPlayerName.Enabled = !m_TextBoxSecondPlayerName.Enabled;
                m_TextBoxSecondPlayerName.ReadOnly = !m_TextBoxSecondPlayerName.ReadOnly;
           }
 
-          private void UpdateSecondPlayerTextBox()
+          private void updateSecondPlayerTextBox()
           {
                if (IsSecondPlayerComputer() == false)
                {
@@ -239,7 +244,7 @@ namespace Ex05.GameUI
 
           internal bool IsSecondPlayerComputer()
           {
-               ////Checking whether the second text box was enabled meaning human player
+               // Checking whether the second text box was enabled meaning human player
                return m_TextBoxSecondPlayerName.Enabled == false && m_TextBoxSecondPlayerName.ReadOnly == true;
           }
 
@@ -264,6 +269,16 @@ namespace Ex05.GameUI
                o_BoardMeasurements = new int[2];
                o_BoardMeasurements[0] = int.Parse(m_ButtonBoardSizeOptions.Text[0].ToString());
                o_BoardMeasurements[1] = int.Parse(m_ButtonBoardSizeOptions.Text[m_ButtonBoardSizeOptions.Text.Length - 1].ToString());
+          }
+
+          protected override void OnFormClosing(FormClosingEventArgs e)
+          {
+               if (arePlayerNamesValid() == false)
+               {
+                    e.Cancel = true;
+               }
+
+               base.OnFormClosing(e);
           }
      }
 }

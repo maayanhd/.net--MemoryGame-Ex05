@@ -12,8 +12,8 @@ namespace Ex05.GameUI
           {
                base.OnKeyPress(e);
 
-               ////Preventing the user to enter other characters than letters
-               ////also preventing using other controls except for the backspace key (with an ASCII code of 8)
+               //Preventing the user to enter other characters than letters
+               //also preventing using other controls except for the backspace key (with an ASCII code of 8)
                if (char.IsLetter(e.KeyChar) == false && e.KeyChar != (char)8 )
                {
                     e.Handled = true;

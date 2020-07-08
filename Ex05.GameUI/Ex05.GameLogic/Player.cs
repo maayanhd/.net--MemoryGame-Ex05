@@ -37,11 +37,11 @@ namespace Ex05.GameLogic
             internal set
             {
                 m_Score = value;
-                OnScoreChanged();
+                onScoreChanged();
             }
         }
 
-        internal void OnScoreChanged()
+        private void onScoreChanged()
         {
             if (ScoreChanged != null)
             {

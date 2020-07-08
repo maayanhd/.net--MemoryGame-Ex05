@@ -68,7 +68,7 @@ namespace Ex05.GameLogic
 
                if (AvailableCards.Count == 0)
                {
-                    OnGameEnded();
+                    onGameEnded();
                }
           }
 
@@ -81,12 +81,12 @@ namespace Ex05.GameLogic
                }
                else
                {
-                    AddIfNotInSeenCards(i_PairOfCards[0]);
-                    AddIfNotInSeenCards(i_PairOfCards[1]);
+                    addIfNotInSeenCards(i_PairOfCards[0]);
+                    addIfNotInSeenCards(i_PairOfCards[1]);
                }
           }
 
-          public void AddIfNotInSeenCards(Cell i_CardToAdd)
+          private void addIfNotInSeenCards(Cell i_CardToAdd)
           {
                if (SeenCards.TryGetValue(i_CardToAdd.CellContent, out List<Location> keyList))
                {
@@ -133,7 +133,7 @@ namespace Ex05.GameLogic
                     return m_Player1;
                }
 
-               set
+               internal set
                {
                     m_Player1 = value;
                }
@@ -146,7 +146,7 @@ namespace Ex05.GameLogic
                     return m_Player2;
                }
 
-               set
+               internal set
                {
                     m_Player2 = value;
                }
@@ -159,7 +159,7 @@ namespace Ex05.GameLogic
                     return m_Board;
                }
 
-               set
+               internal set
                {
                     m_Board = value;
                }
@@ -172,13 +172,13 @@ namespace Ex05.GameLogic
                     return m_AvailableCards;
                }
 
-               set
+               internal set
                {
                     m_AvailableCards = value;
                }
           }
 
-          internal void OnCardFlipped(Cell i_FlippedCard)
+          private void onCardFlipped(Cell i_FlippedCard)
           {
                if(CardFlipped != null)
                {
@@ -186,7 +186,7 @@ namespace Ex05.GameLogic
                }
           }
 
-          internal void OnGameEnded()
+          private void onGameEnded()
           {
                if (GameEnded != null)
                {
@@ -218,7 +218,7 @@ namespace Ex05.GameLogic
                // Flipping Card by logic
                m_Board[i, j].IsFlipped = !m_Board[i, j].IsFlipped;
 
-               OnCardFlipped(m_Board[i, j]);
+               onCardFlipped(m_Board[i, j]);
           }
      }
 }

@@ -9,50 +9,52 @@ namespace Ex05.GameUI
 {
      public static class App
      {
-          public static void Run()
+          internal static void Run()
           {
                bool IsGameStillOn = true;
 
                // For more up to date visual effects
                Application.EnableVisualStyles();
 
+               FormSettings formMemoryGameSettings = showAndGenerateFormSetting();
+               
                do
                {
-                    StartNewGame(out IsGameStillOn);
+                    startNewGame(out IsGameStillOn, formMemoryGameSettings);
                }
                while (IsGameStillOn == true);
           }
 
-          public static void StartNewGame(out bool o_IsTheGameStillOn)
+          private static Game generateMemoryGameFromSettings(FormSettings i_FormMemoryGameSettings)
           {
-               DialogResult dialogRes;
+               i_FormMemoryGameSettings.GetBoardMeasurements(out int[] boardMeasurements);
+               List<int> memoryCards = GenerateMemoryCards(boardMeasurements[0] * boardMeasurements[1]);
+
+               Game currentGame = new Game(
+                   boardMeasurements,
+                   memoryCards,
+                   getPlayerNamesFromSettingsForm(i_FormMemoryGameSettings),
+                   getPlayerTypesFromSettingsForm(i_FormMemoryGameSettings));
+
+               return currentGame;
+          }
+
+          private static void startNewGame(out bool o_IsTheGameStillOn, FormSettings i_FormMemoryGameSettings)
+          {
                o_IsTheGameStillOn = false;
-               FormSettings settingsForm = new FormSettings();
+             
+               Game currentGame = generateMemoryGameFromSettings(i_FormMemoryGameSettings);
+                    
+               FormMemoryGame formMemoryGame = new FormMemoryGame(currentGame);
+               showGameForm(formMemoryGame);
 
-               ShowFormSetting(settingsForm);
-               dialogRes = settingsForm.DialogResult;
-
-               if (dialogRes != DialogResult.Cancel)
+               if (formMemoryGame.DialogResult != DialogResult.Cancel)
                {
-                    settingsForm.GetBoardMeasurements(out int[] boardMeasurements);
-                    List<int> memoryCards = GenerateMemoryCards(boardMeasurements[0] * boardMeasurements[1]);
-                    Game currentGame = new Game(
-                        boardMeasurements,
-                        memoryCards,
-                        GetPlayerNamesFromSettingsForm(settingsForm),
-                        GetPlayerTypesFromSettingsForm(settingsForm));
-
-                    FormMemoryGame formMemoryGame = new FormMemoryGame(currentGame);
-                    ShowGameForm(formMemoryGame);
-                    dialogRes = formMemoryGame.DialogResult;
-                    if (dialogRes != DialogResult.Cancel)
-                    {
-                         o_IsTheGameStillOn = AskIfKeepPlaying();
-                    }
+                    o_IsTheGameStillOn = askIfKeepPlaying();
                }
           }
 
-          internal static bool AskIfKeepPlaying()
+          private static bool askIfKeepPlaying()
           {
                bool isKeepPlaying = false;
 
@@ -62,7 +64,7 @@ namespace Ex05.GameUI
                return isKeepPlaying;
           }
 
-          public static GameLogic.Player.ePlayerType[] GetPlayerTypesFromSettingsForm(FormSettings io_FormSettings)
+          private static GameLogic.Player.ePlayerType[] getPlayerTypesFromSettingsForm(FormSettings io_FormSettings)
           {
                GameLogic.Player.ePlayerType[] playerTypes = new Player.ePlayerType[2];
 
@@ -73,7 +75,7 @@ namespace Ex05.GameUI
                return playerTypes;
           }
 
-          public static string[] GetPlayerNamesFromSettingsForm(FormSettings io_FormSettings)
+          private static string[] getPlayerNamesFromSettingsForm(FormSettings io_FormSettings)
           {
                string[] playerNames = new string[2];
 
@@ -83,11 +85,11 @@ namespace Ex05.GameUI
                return playerNames;
           }
 
-          internal static List<int> GenerateMemoryCards(int i_NumOfCards)
+          private static List<int> GenerateMemoryCards(int i_NumOfCards)
           {
                List<int> memoryCards = new List<int>();
 
-               for (int i = 0; i < i_NumOfCards / 2; i++) 
+               for (int i = 0; i < i_NumOfCards / 2; i++)
                {
                     // Adding a couple of integers representing a matching memory cards pair id number
                     memoryCards.Add(i);
@@ -97,14 +99,17 @@ namespace Ex05.GameUI
                return memoryCards;
           }
 
-          internal static void ShowGameForm(FormMemoryGame i_FormMemoryGame)
+          private static void showGameForm(FormMemoryGame i_FormMemoryGame)
           {
                i_FormMemoryGame.ShowDialog();
           }
 
-          internal static void ShowFormSetting(FormSettings io_SettingsForm)
+          private static FormSettings showAndGenerateFormSetting()
           {
-               io_SettingsForm.ShowDialog();
+               FormSettings settingsForm = new FormSettings();
+               settingsForm.ShowDialog();
+
+               return settingsForm;
           }
      }
 }

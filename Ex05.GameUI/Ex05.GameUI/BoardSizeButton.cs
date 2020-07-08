@@ -21,8 +21,8 @@ namespace Ex05.GameUI
                string rows = string.Empty, cols = string.Empty;
                string sizeOfBoardString = string.Format("{0}X{1}", rows, cols);
 
-               ////Rows and cols number varies between 4 to 6
-               ////An odd number of cells is not possible (since a total number made out of pairs is even)
+               //Rows and cols number varies between 4 to 6
+               //An odd number of cells is not possible (since a total number made out of pairs is even)
                for (int i = 4; i <= 6; i++)
                {
                     for (int j = 4; j <= 6; j++)

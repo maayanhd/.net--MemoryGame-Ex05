@@ -22,7 +22,7 @@ namespace Ex05.GameLogic
                     return m_Row;
                }
 
-               set
+               internal set
                {
                     m_Row = value;
                }
@@ -35,7 +35,7 @@ namespace Ex05.GameLogic
                     return m_Col;
                }
 
-               set
+               internal set
                {
                     m_Col = value;
                }

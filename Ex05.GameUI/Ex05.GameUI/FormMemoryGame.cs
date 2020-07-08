@@ -45,8 +45,8 @@ namespace Ex05.GameUI
                r_ExposureTimer.Interval = 750;
                r_ExposureTimer.Tick += exposureTimer_Tick;
 
-               i_CurrentGame.Player1.ScoreChanged += Player_ScoreChanged;
-               i_CurrentGame.Player2.ScoreChanged += Player_ScoreChanged;
+               i_CurrentGame.Player1.ScoreChanged += player_ScoreChanged;
+               i_CurrentGame.Player2.ScoreChanged += player_ScoreChanged;
                m_CurrentPlayer = i_CurrentGame.Player1;
                m_ChosenPair = new CardButton[2];
 
@@ -82,9 +82,10 @@ namespace Ex05.GameUI
 
                if (i_PostGameInfo.IsaDraw == false)
                {
+                    string winnerName = i_PostGameInfo.Winner.IsComputer() == true ? "Computer" : i_PostGameInfo.Winner.Name;
                     endOfTheGameAnnouncement = string.Format(
                         "{0} has won with a score of {1}",
-                        i_PostGameInfo.Winner.Name,
+                        winnerName,
                         i_PostGameInfo.Winner.Score);
                }
 
@@ -103,15 +104,15 @@ namespace Ex05.GameUI
 
                if(isCardFacingUpAfterFlipped)
                {
-                    ExposeCard(cardToFlip);
+                    exposeCard(cardToFlip);
                }
                else
                {
-                    HideCard(cardToFlip);
+                    hideCard(cardToFlip);
                }
           }
 
-          private void Player_ScoreChanged(int i_ScoreToUpdate)
+          private void player_ScoreChanged(int i_ScoreToUpdate)
           {
                string labelString = string.Format(
                    "{0}: {1} Pairs",
@@ -124,7 +125,7 @@ namespace Ex05.GameUI
                currentLabel.Text = labelString;
           }
 
-          internal void GenerateImagesArray()
+          private void GenerateImagesArray()
           {
                for (int i = 0; i < m_CardImages.Length; i++)
                {
@@ -145,10 +146,10 @@ namespace Ex05.GameUI
                designLabelCurrentPlayer();
 
                // m_LabelFirstPlayer
-               design_LabelFirstPlayer();
+               designLabelFirstPlayer();
 
                // m_LabelSecondPlayer
-               design_LabelSecondPlayer();
+               designLabelSecondPlayer();
 
                // FormMemoryGame
                this.ClientSize = calcClientSize();
@@ -157,7 +158,7 @@ namespace Ex05.GameUI
                designMemoryGameForm();
           }
 
-          internal void BuildBoard()
+          private void BuildBoard()
           {
                int height = m_Board.GetLength(0);
                int width = m_Board.GetLength(1);
@@ -216,7 +217,7 @@ namespace Ex05.GameUI
                this.m_LabelCurrentPlayer.Text = string.Format("Current Player : {0}", m_CurrentPlayer.Name);
           }
 
-          private void design_LabelFirstPlayer()
+          private void designLabelFirstPlayer()
           {
                this.m_LabelFirstPlayer.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom
               | System.Windows.Forms.AnchorStyles.Left
@@ -234,7 +235,7 @@ namespace Ex05.GameUI
                    m_CurrentGame.Player1.Name);
           }
 
-          private void design_LabelSecondPlayer()
+          private void designLabelSecondPlayer()
           {
                this.m_LabelSecondPlayer.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom
                                                   | System.Windows.Forms.AnchorStyles.Left
@@ -259,6 +260,7 @@ namespace Ex05.GameUI
 
           private void designMemoryGameForm()
           {
+               this.Text = "Memory Game";
                this.MaximizeBox = false;
                this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
                this.Name = "FormMemoryGame";
@@ -291,7 +293,6 @@ namespace Ex05.GameUI
 
                m_CurrentGame.FlipCard(cardCell); 
                
-               //ExposeCard(buttonClicked);
                if (m_ChosenPair[0] == null)
                {
                     // First card of the pair to be exposed
@@ -307,7 +308,7 @@ namespace Ex05.GameUI
                }
           }
 
-          private void ExposeCard(CardButton i_CardToExpose)
+          private void exposeCard(CardButton i_CardToExpose)
           {
                if (i_CardToExpose != null)
                {
@@ -334,8 +335,6 @@ namespace Ex05.GameUI
                     m_CurrentGame.FlipCard(firstCardCell);
                     m_CurrentGame.FlipCard(secondCardCell);
 
-                    //HideCard(m_ChosenPair[0]);
-                    //HideCard(m_ChosenPair[1]);
                     switchPlayer();
                }
             
@@ -345,16 +344,16 @@ namespace Ex05.GameUI
                m_ChosenPair[0] = null;
                m_ChosenPair[1] = null;
 
-               // turn back the form // 
+               // turn back the form 
                this.Enabled = true;
 
                if (m_CurrentPlayer.IsComputer() && m_CurrentGame.IsTheGameEnded() == false)
                {
-                    ComputerTurn();
+                    computerTurn();
                }
           }
 
-          private void HideCard(CardButton i_CardToHide)
+          private void hideCard(CardButton i_CardToHide)
           {
                if (i_CardToHide != null)
                {
@@ -365,7 +364,7 @@ namespace Ex05.GameUI
                }
           }
 
-          internal void ComputerTurn()
+          private void computerTurn()
           {
                Cell[] computerMove = m_CurrentPlayer.ComputerMove(m_CurrentGame);
                Location firstCardLocation = computerMove[0].Location;

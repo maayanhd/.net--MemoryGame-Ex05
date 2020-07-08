@@ -24,7 +24,7 @@ namespace Ex05.GameLogic
                     return m_CellContent;
                }
 
-               set
+               internal set
                {
                     m_CellContent = value;
                }
@@ -37,7 +37,7 @@ namespace Ex05.GameLogic
                     return m_IsFlipped;
                }
 
-               set
+               internal set
                {
                     m_IsFlipped = value;
                }
@@ -50,7 +50,7 @@ namespace Ex05.GameLogic
                     return m_Location;
                }
 
-               set
+               internal set
                {
                     m_Location = value;
                }
