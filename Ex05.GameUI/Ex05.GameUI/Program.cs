@@ -8,7 +8,7 @@ namespace Ex05.GameUI
      {
           public static void Main()
           {
-              App.Run();
+              MemoryGameApp.Run();
           }          
      }
 }

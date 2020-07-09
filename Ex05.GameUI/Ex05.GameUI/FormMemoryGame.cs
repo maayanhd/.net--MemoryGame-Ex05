@@ -10,23 +10,22 @@ namespace Ex05.GameUI
 {
     internal class FormMemoryGame : Form
     {
+        private const int k_BorderMargin = 16;
+        private const int k_MarginBetweenObjects = 8;
+
         private readonly Color[] r_PlayerColors;
-        private readonly int r_BorderMargin = 16;
-        private readonly int r_MarginBetweenObjects = 8;
         private readonly Size r_ImageSize = new Size(80, 80);
         private readonly Timer r_ExposureTimer;
+        private readonly CardButton[,] r_Board;
+        private readonly Image[] r_CardImages;
+        private readonly CardButton[] r_ChosenPair;
+        private readonly Game r_CurrentGame;
 
-        private CardButton[,] m_Board;
         private Label m_LabelCurrentPlayer;
         private Label m_LabelFirstPlayer;
         private Label m_LabelSecondPlayer;
-
-        private Game m_CurrentGame;
-        private Image[] m_CardImages;
-
         private Player m_CurrentPlayer;
-        private CardButton[] m_ChosenPair;
-
+        
         public FormMemoryGame(Game i_CurrentGame) : base()
         {
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -34,53 +33,73 @@ namespace Ex05.GameUI
             int height = i_CurrentGame.Board.GetLength(0);
             int width = i_CurrentGame.Board.GetLength(1);
 
-            m_CurrentGame = i_CurrentGame;
+            r_CurrentGame = i_CurrentGame;
             r_PlayerColors = new Color[2];
-
-            m_CurrentGame.GameEnded += m_CurrentGame_GameEnded;
-            m_CurrentGame.CardFlipped += m_CurrentGame_CardFlipped;
 
             // For delay after exposing the second card if needed 
             r_ExposureTimer = new Timer();
             r_ExposureTimer.Interval = 750;
-            r_ExposureTimer.Tick += exposureTimer_Tick;
 
-            i_CurrentGame.Player1.ScoreChanged += player_ScoreChanged;
-            i_CurrentGame.Player2.ScoreChanged += player_ScoreChanged;
             m_CurrentPlayer = i_CurrentGame.Player1;
-            m_ChosenPair = new CardButton[2];
+            r_ChosenPair = new CardButton[2];
 
             r_PlayerColors[0] = getLightGreenFromRgb();
             r_PlayerColors[1] = getLightPurpleFromRgb();
 
-            m_Board = new CardButton[height, width];
-            m_CardImages = new Image[(height * width) / 2];
+            r_Board = new CardButton[height, width];
+            r_CardImages = new Image[(height * width) / 2];
 
             generateImagesArray();
+            manageEventsJoining();
             initializeComponent();
         }
 
-        private System.Drawing.Color getLightGreenFromRgb()
+        private static System.Drawing.Color getLightGreenFromRgb()
         {
             return System.Drawing.Color.FromArgb(
-           (int)((byte)192),
-           (int)((byte)255),
-           (int)((byte)192));
+                (int)((byte)192),
+                (int)((byte)255),
+                (int)((byte)192));
         }
 
-        private System.Drawing.Color getLightPurpleFromRgb()
+        private static System.Drawing.Color getLightPurpleFromRgb()
         {
             return System.Drawing.Color.FromArgb(
-           (int)((byte)192),
-           (int)((byte)192),
-           (int)((byte)255));
+                (int)((byte)192),
+                (int)((byte)192),
+                (int)((byte)255));
         }
 
-        private void m_CurrentGame_GameEnded(PostGameInfo i_PostGameInfo)
+        private static void hideCard(CardButton i_CardToHide)
+        {
+            if (i_CardToHide != null)
+            {
+                i_CardToHide.BackgroundImage = null;
+                i_CardToHide.FlatAppearance.BorderColor = Color.Black;
+                i_CardToHide.FlatAppearance.BorderSize = 1;
+                i_CardToHide.Enabled = true;
+            }
+        }
+
+        private static int getVisualLabelHeight(Label i_LabelToEstimate)
+        {
+            return i_LabelToEstimate.Height + k_MarginBetweenObjects;
+        }
+
+        private void manageEventsJoining()
+        {
+            r_CurrentGame.GameEnded += r_CurrentGame_GameEnded;
+            r_CurrentGame.CardFlipped += r_CurrentGame_CardFlipped;
+            r_CurrentGame.Player1.ScoreChanged += player_ScoreChanged;
+            r_CurrentGame.Player2.ScoreChanged += player_ScoreChanged;
+            r_ExposureTimer.Tick += exposureTimer_Tick;
+        }
+
+        private void r_CurrentGame_GameEnded(PostGameInfo i_PostGameInfo)
         {
             string endOfTheGameAnnouncement = "The game ended in a draw!";
 
-            if (i_PostGameInfo.IsaDraw == false)
+            if (i_PostGameInfo.IsADraw == false)
             {
                 string winnerName = i_PostGameInfo.Winner.IsComputer() == true ? "Computer" : i_PostGameInfo.Winner.Name;
                 endOfTheGameAnnouncement = string.Format(
@@ -94,12 +113,12 @@ namespace Ex05.GameUI
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
-
-        private void m_CurrentGame_CardFlipped(Cell i_CardFlipped)
+        
+        private void r_CurrentGame_CardFlipped(Cell i_CardFlipped)
         {
             int i = i_CardFlipped.Location.Row,
                 j = i_CardFlipped.Location.Col;
-            CardButton cardToFlip = m_Board[i, j];
+            CardButton cardToFlip = r_Board[i, j];
             bool isCardFacingUpAfterFlipped = i_CardFlipped.IsFlipped;
 
             if (isCardFacingUpAfterFlipped)
@@ -120,18 +139,18 @@ namespace Ex05.GameUI
                 i_ScoreToUpdate);
 
             Label currentLabel =
-                m_CurrentPlayer == m_CurrentGame.Player1 ? m_LabelFirstPlayer : m_LabelSecondPlayer;
+                m_CurrentPlayer == r_CurrentGame.Player1 ? m_LabelFirstPlayer : m_LabelSecondPlayer;
 
             currentLabel.Text = labelString;
         }
 
         private void generateImagesArray()
         {
-            for (int i = 0; i < m_CardImages.Length; i++)
+            for (int i = 0; i < r_CardImages.Length; i++)
             {
                 PictureBox img = new PictureBox();
                 img.Load("https://picsum.photos/80");
-                m_CardImages[i] = img.Image;
+                r_CardImages[i] = img.Image;
             }
         }
 
@@ -160,15 +179,15 @@ namespace Ex05.GameUI
 
         private void buildBoard()
         {
-            int height = m_Board.GetLength(0);
-            int width = m_Board.GetLength(1);
+            int height = r_Board.GetLength(0);
+            int width = r_Board.GetLength(1);
 
             for (int i = 0; i < height; i++)
             {
                 for (int j = 0; j < width; j++)
                 {
-                    int locationFromTop = i > 0 ? m_Board[i - 1, j].Bottom + r_MarginBetweenObjects : r_BorderMargin,
-                        locationFromLeft = j > 0 ? m_Board[i, j - 1].Right + r_MarginBetweenObjects : r_BorderMargin;
+                    int locationFromTop = i > 0 ? r_Board[i - 1, j].Bottom + k_MarginBetweenObjects : k_BorderMargin,
+                        locationFromLeft = j > 0 ? r_Board[i, j - 1].Right + k_MarginBetweenObjects : k_BorderMargin;
 
                     addCardButtonToBoard(i, j, locationFromLeft, locationFromTop);
                 }
@@ -177,21 +196,24 @@ namespace Ex05.GameUI
 
         private void addCardButtonToBoard(int i_HeightIdx, int i_WidthIdx, params int[] i_CardButtonLocation)
         {
-            m_Board[i_HeightIdx, i_WidthIdx] = new CardButton(new Location(i_HeightIdx, i_WidthIdx));
+            r_Board[i_HeightIdx, i_WidthIdx] = new CardButton(new Location(i_HeightIdx, i_WidthIdx));
 
-            CardButton currentCardButton = m_Board[i_HeightIdx, i_WidthIdx];
+            CardButton currentCardButton = r_Board[i_HeightIdx, i_WidthIdx];
             currentCardButton.BackgroundImage = null;
             currentCardButton.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top
                                                                               | System.Windows.Forms.AnchorStyles.Left
                                                                              | System.Windows.Forms.AnchorStyles.Right);
             currentCardButton.FlatStyle = FlatStyle.Flat;
             currentCardButton.Location = new System.Drawing.Point(i_CardButtonLocation[0], i_CardButtonLocation[1]);
-            currentCardButton.Name = string.Format("m_ButtonCard{0}{1}", i_HeightIdx, i_WidthIdx);
+            currentCardButton.Name = string.Format(
+                "m_ButtonCard{0}{1}",
+                i_HeightIdx,
+                i_WidthIdx);
             currentCardButton.Size = r_ImageSize;
-            currentCardButton.TabIndex = i_HeightIdx * m_Board.GetLength(0) + i_WidthIdx;
+            currentCardButton.TabIndex = (i_HeightIdx * r_Board.GetLength(0)) + i_WidthIdx;
             currentCardButton.UseVisualStyleBackColor = true;
             currentCardButton.Click += new System.EventHandler(this.cardButton_Click);
-            this.Controls.Add(m_Board[i_HeightIdx, i_WidthIdx]);
+            this.Controls.Add(r_Board[i_HeightIdx, i_WidthIdx]);
         }
 
         private void allocateControls()
@@ -208,12 +230,14 @@ namespace Ex05.GameUI
                        | System.Windows.Forms.AnchorStyles.Right);
             this.m_LabelCurrentPlayer.AutoSize = true;
             this.m_LabelCurrentPlayer.BackColor = r_PlayerColors[0];
-            this.m_LabelCurrentPlayer.Location = new System.Drawing.Point(r_BorderMargin, m_Board[m_Board.GetLength(0) - 1, 0].Bottom + r_BorderMargin);
+            this.m_LabelCurrentPlayer.Location = new System.Drawing.Point(k_BorderMargin, r_Board[r_Board.GetLength(0) - 1, 0].Bottom + k_BorderMargin);
             this.m_LabelCurrentPlayer.Name = "m_LabelCurrentPlayerName";
             this.m_LabelCurrentPlayer.Size = new System.Drawing.Size(243, 17);
 
             // Assuming the board size is under 100  - meaning less than 100 memory cards involved in the game
-            this.m_LabelCurrentPlayer.Text = string.Format("Current Player : {0}", m_CurrentPlayer.Name);
+            this.m_LabelCurrentPlayer.Text = string.Format(
+                "Current Player : {0}",
+                m_CurrentPlayer.Name);
         }
 
         private void designLabelFirstPlayer()
@@ -224,13 +248,13 @@ namespace Ex05.GameUI
             this.m_LabelFirstPlayer.AutoSize = true;
             this.m_LabelFirstPlayer.BackColor = r_PlayerColors[0];
             this.m_LabelFirstPlayer.Location = new System.Drawing.Point(
-                r_BorderMargin,
-                m_LabelCurrentPlayer.Bottom + r_MarginBetweenObjects);
+                k_BorderMargin,
+                m_LabelCurrentPlayer.Bottom + k_MarginBetweenObjects);
             this.m_LabelFirstPlayer.Name = "m_LabelFirstPlayerName";
             this.m_LabelFirstPlayer.Size = new System.Drawing.Size(188, 17);
             this.m_LabelFirstPlayer.Text = string.Format(
                 "{0}: 0 Pairs",
-                m_CurrentGame.Player1.Name);
+                r_CurrentGame.Player1.Name);
         }
 
         private void designLabelSecondPlayer()
@@ -240,12 +264,12 @@ namespace Ex05.GameUI
                                                | System.Windows.Forms.AnchorStyles.Right);
             this.m_LabelSecondPlayer.AutoSize = true;
             this.m_LabelSecondPlayer.BackColor = r_PlayerColors[1];
-            this.m_LabelSecondPlayer.Location = new System.Drawing.Point(r_BorderMargin, m_LabelFirstPlayer.Bottom + r_MarginBetweenObjects);
+            this.m_LabelSecondPlayer.Location = new System.Drawing.Point(k_BorderMargin, m_LabelFirstPlayer.Bottom + k_MarginBetweenObjects);
             this.m_LabelSecondPlayer.Name = "m_LabelFirstPlayerName";
             this.m_LabelSecondPlayer.Size = new System.Drawing.Size(135, 17);
             this.m_LabelSecondPlayer.Text = string.Format(
                 "{0}: 0 Pairs",
-                m_CurrentGame.Player2.Name);
+                r_CurrentGame.Player2.Name);
         }
 
         private void addControlsToThisForm()
@@ -269,49 +293,44 @@ namespace Ex05.GameUI
         {
             int formHeight = getVisualBoardHeight();
 
-            formHeight += getVisualLabelHeight(m_LabelCurrentPlayer) + r_MarginBetweenObjects;
+            formHeight += getVisualLabelHeight(m_LabelCurrentPlayer) + k_MarginBetweenObjects;
             formHeight += getVisualLabelHeight(m_LabelFirstPlayer);
             formHeight += getVisualLabelHeight(m_LabelSecondPlayer);
 
             return new Size(getVisualBoardWidth(), formHeight);
-
         }
 
         private int getVisualBoardHeight()
         {
             int pictureHeight = r_ImageSize.Height;
 
-            return (m_Board.GetLength(0) - 1) * r_MarginBetweenObjects + (r_BorderMargin * 2) + (pictureHeight * m_Board.GetLength(0));
+            return ((r_Board.GetLength(0) - 1) * k_MarginBetweenObjects) + (k_BorderMargin * 2) + (pictureHeight * r_Board.GetLength(0));
         }
 
         private int getVisualBoardWidth()
         {
             int pictureWidth = r_ImageSize.Width;
 
-            return (r_BorderMargin * 2) + (pictureWidth * m_Board.GetLength(1)) + ((m_Board.GetLength(1) - 1) * r_MarginBetweenObjects);
+            return (k_BorderMargin * 2) + (pictureWidth * r_Board.GetLength(1)) + ((r_Board.GetLength(1) - 1) * k_MarginBetweenObjects);
         }
 
-        private int getVisualLabelHeight(Label i_LabelToEstimate)
+        private void cardButton_Click(object i_Sender, EventArgs i_E)
         {
-            return i_LabelToEstimate.Height + r_MarginBetweenObjects;
-        }
-        private void cardButton_Click(object sender, EventArgs e)
-        {
-            CardButton buttonClicked = sender as CardButton;
+            CardButton buttonClicked = i_Sender as CardButton;
 
             Location cardLocation = buttonClicked.CardLocation.Value;
-            Cell cardCell = m_CurrentGame.GetCellByLocation(cardLocation);
+            Cell cardCell = r_CurrentGame.GetCellByLocation(cardLocation);
 
-            m_CurrentGame.FlipCard(cardCell);
+            r_CurrentGame.FlipCard(cardCell);
 
-            if (m_ChosenPair[0] == null)
+            if (r_ChosenPair[0] == null)
             {
                 // First card of the pair to be exposed
-                m_ChosenPair[0] = buttonClicked;
+                r_ChosenPair[0] = buttonClicked;
             }
             else
             {
-                m_ChosenPair[1] = buttonClicked;
+                r_ChosenPair[1] = buttonClicked;
 
                 // disable the form in order to avoid unnecessary clicks //
                 this.Enabled = false;
@@ -324,78 +343,66 @@ namespace Ex05.GameUI
             if (i_CardToExpose != null)
             {
                 Location? cardLocation = i_CardToExpose.CardLocation;
-                int cardContentId = m_CurrentGame.Board[cardLocation.Value.Row, cardLocation.Value.Col].CellContent;
-                i_CardToExpose.BackgroundImage = m_CardImages[cardContentId];
+                int cardContentId = r_CurrentGame.Board[cardLocation.Value.Row, cardLocation.Value.Col].CellContent;
+                i_CardToExpose.BackgroundImage = r_CardImages[cardContentId];
                 i_CardToExpose.FlatAppearance.BorderColor = getCurrentPlayerColor();
                 i_CardToExpose.FlatAppearance.BorderSize = 5;
                 i_CardToExpose.Enabled = false;
             }
         }
 
-        private void exposureTimer_Tick(object sender, EventArgs e)
+        private void exposureTimer_Tick(object i_Sender, EventArgs i_E)
         {
-            Location firstCardLocation = m_ChosenPair[0].CardLocation.Value;
-            Location secondCardLocation = m_ChosenPair[1].CardLocation.Value;
-            Cell firstCardCell = m_CurrentGame.GetCellByLocation(firstCardLocation);
-            Cell secondCardCell = m_CurrentGame.GetCellByLocation(secondCardLocation);
+            Location firstCardLocation = r_ChosenPair[0].CardLocation.Value;
+            Location secondCardLocation = r_ChosenPair[1].CardLocation.Value;
+            Cell firstCardCell = r_CurrentGame.GetCellByLocation(firstCardLocation);
+            Cell secondCardCell = r_CurrentGame.GetCellByLocation(secondCardLocation);
 
-            bool isAMatch = m_CurrentGame.IsThereAMatch(m_CurrentPlayer, firstCardCell, secondCardCell);
+            bool isAMatch = r_CurrentGame.IsThereAMatch(m_CurrentPlayer, firstCardCell, secondCardCell);
             r_ExposureTimer.Stop();
             if (isAMatch == false)
             {
-                m_CurrentGame.FlipCard(firstCardCell);
-                m_CurrentGame.FlipCard(secondCardCell);
+                r_CurrentGame.FlipCard(firstCardCell);
+                r_CurrentGame.FlipCard(secondCardCell);
 
                 switchPlayer();
             }
 
-            m_CurrentGame.UpdateAvailableCards(isAMatch, firstCardCell, secondCardCell);
-            m_CurrentGame.UpdateSeenCards(isAMatch, firstCardCell, secondCardCell);
+            r_CurrentGame.UpdateAvailableCards(isAMatch, firstCardCell, secondCardCell);
+            r_CurrentGame.UpdateSeenCards(isAMatch, firstCardCell, secondCardCell);
 
-            m_ChosenPair[0] = null;
-            m_ChosenPair[1] = null;
+            r_ChosenPair[0] = null;
+            r_ChosenPair[1] = null;
 
             // turn back the form 
             this.Enabled = true;
 
-            if (m_CurrentPlayer.IsComputer() && m_CurrentGame.IsTheGameEnded() == false)
+            if (m_CurrentPlayer.IsComputer() && r_CurrentGame.IsTheGameEnded() == false)
             {
                 computerTurn();
             }
         }
 
-        private void hideCard(CardButton i_CardToHide)
-        {
-            if (i_CardToHide != null)
-            {
-                i_CardToHide.BackgroundImage = null;
-                i_CardToHide.FlatAppearance.BorderColor = Color.Black;
-                i_CardToHide.FlatAppearance.BorderSize = 1;
-                i_CardToHide.Enabled = true;
-            }
-        }
-
         private void computerTurn()
         {
-            Cell[] computerMove = m_CurrentPlayer.ComputerMove(m_CurrentGame);
+            Cell[] computerMove = m_CurrentPlayer.ComputerMove(r_CurrentGame);
             Location firstCardLocation = computerMove[0].Location;
             Location secondCardLocation = computerMove[1].Location;
 
-            m_Board[firstCardLocation.Row, firstCardLocation.Col].PerformClick();
-            m_Board[secondCardLocation.Row, secondCardLocation.Col].PerformClick();
+            r_Board[firstCardLocation.Row, firstCardLocation.Col].PerformClick();
+            r_Board[secondCardLocation.Row, secondCardLocation.Col].PerformClick();
         }
 
         private void switchPlayer()
         {
-            m_CurrentPlayer = m_CurrentPlayer == m_CurrentGame.Player1 ? m_CurrentGame.Player2 : m_CurrentGame.Player1;
+            m_CurrentPlayer = m_CurrentPlayer == r_CurrentGame.Player1 ? r_CurrentGame.Player2 : r_CurrentGame.Player1;
             m_LabelCurrentPlayer.Text = string.Format("Current Player : {0}", m_CurrentPlayer.Name);
             m_LabelCurrentPlayer.BackColor = getCurrentPlayerColor();
         }
 
         private Color getCurrentPlayerColor()
         {
-            Color currentPlayerColor;
-            currentPlayerColor = m_CurrentPlayer == m_CurrentGame.Player1 ? r_PlayerColors[0] : r_PlayerColors[1];
+            Color currentPlayerColor = m_CurrentPlayer == r_CurrentGame.Player1 ? r_PlayerColors[0] : r_PlayerColors[1];
 
             return currentPlayerColor;
         }

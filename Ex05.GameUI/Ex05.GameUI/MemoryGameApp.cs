@@ -7,11 +7,11 @@ using Ex05.GameLogic;
 
 namespace Ex05.GameUI
 {
-     public static class App
+     public static class MemoryGameApp
      {
           internal static void Run()
           {
-               bool IsGameStillOn = true;
+               bool isGameStillOn = true;
 
                // For more up to date visual effects
                Application.EnableVisualStyles();
@@ -20,15 +20,15 @@ namespace Ex05.GameUI
                
                do
                {
-                    startNewGame(out IsGameStillOn, formMemoryGameSettings);
+                    startNewGame(out isGameStillOn, formMemoryGameSettings);
                }
-               while (IsGameStillOn == true);
+               while (isGameStillOn == true);
           }
 
           private static Game generateMemoryGameFromSettings(FormSettings i_FormMemoryGameSettings)
           {
                i_FormMemoryGameSettings.GetBoardMeasurements(out int[] boardMeasurements);
-               List<int> memoryCards = GenerateMemoryCards(boardMeasurements[0] * boardMeasurements[1]);
+               List<int> memoryCards = generateMemoryCards(boardMeasurements[0] * boardMeasurements[1]);
 
                Game currentGame = new Game(
                    boardMeasurements,
@@ -64,28 +64,28 @@ namespace Ex05.GameUI
                return isKeepPlaying;
           }
 
-          private static GameLogic.Player.ePlayerType[] getPlayerTypesFromSettingsForm(FormSettings io_FormSettings)
+          private static GameLogic.Player.ePlayerType[] getPlayerTypesFromSettingsForm(FormSettings i_FormSettings)
           {
                GameLogic.Player.ePlayerType[] playerTypes = new Player.ePlayerType[2];
 
                // Working under the assumption that the first player stored in the array is a human player -  due to design
                playerTypes[0] = GameLogic.Player.ePlayerType.Human;
-               playerTypes[1] = io_FormSettings.IsSecondPlayerComputer() ? GameLogic.Player.ePlayerType.Computer : GameLogic.Player.ePlayerType.Human;
+               playerTypes[1] = i_FormSettings.IsSecondPlayerComputer() ? GameLogic.Player.ePlayerType.Computer : GameLogic.Player.ePlayerType.Human;
 
                return playerTypes;
           }
 
-          private static string[] getPlayerNamesFromSettingsForm(FormSettings io_FormSettings)
+          private static string[] getPlayerNamesFromSettingsForm(FormSettings i_FormSettings)
           {
                string[] playerNames = new string[2];
 
-               playerNames[0] = io_FormSettings.Player1Name;
-               playerNames[1] = io_FormSettings.Player2Name;
+               playerNames[0] = i_FormSettings.Player1Name;
+               playerNames[1] = i_FormSettings.Player2Name;
 
                return playerNames;
           }
 
-          private static List<int> GenerateMemoryCards(int i_NumOfCards)
+          private static List<int> generateMemoryCards(int i_NumOfCards)
           {
                List<int> memoryCards = new List<int>();
 
@@ -99,7 +99,7 @@ namespace Ex05.GameUI
                return memoryCards;
           }
 
-          private static void showGameForm(FormMemoryGame i_FormMemoryGame)
+          private static void showGameForm(Form i_FormMemoryGame)
           {
                i_FormMemoryGame.ShowDialog();
           }

@@ -10,19 +10,19 @@ namespace Ex05.GameUI
 {
     public class CardButton : Button
     {
-        private Location? m_CardLocation;
+        private readonly Location? r_CardLocation;
 
         public CardButton(Location? i_CardLocation)
             : base()
         {
-            m_CardLocation = i_CardLocation;
+            r_CardLocation = i_CardLocation;
         }
 
         public Location? CardLocation
         {
             get
             {
-                return m_CardLocation;
+                return r_CardLocation;
             }
         }
     }

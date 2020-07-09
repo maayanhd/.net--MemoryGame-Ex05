@@ -10,32 +10,32 @@ namespace Ex05.GameLogic
           private const int k_HeightIndex = 0;
           private const int k_WidthIndex = 1;
 
-          private Player m_Player1 = null;
-          private Player m_Player2 = null;
-          private Cell[,] m_Board = null;
+          private readonly Player r_Player1 = null;
+          private readonly Player r_Player2 = null;
+          private readonly Cell[,] r_Board = null;
 
-          private List<Cell> m_AvailableCards = null;
-          private Dictionary<int, List<Location>> m_SeenCards = null;
+          private readonly List<Cell> r_AvailableCards = null;
+          private readonly Dictionary<int, List<Location>> r_SeenCards = null;
 
           public event Action<PostGameInfo> GameEnded;
 
           public event Action<Cell> CardFlipped;
           
-          public Game(int[] i_Measurements, List<int> io_Cards, string[] i_Names, Player.ePlayerType[] i_PlayerTypes)
+          public Game(int[] i_Measurements, List<int> i_Cards, string[] i_Names, Player.ePlayerType[] i_PlayerTypes)
           {
-               m_Board = new Cell[i_Measurements[k_HeightIndex], i_Measurements[k_WidthIndex]];
-               AvailableCards = new List<Cell>();
-               m_Player1 = new Player(i_Names[0], i_PlayerTypes[0]);
-               m_Player2 = new Player(i_Names[1], i_PlayerTypes[1]);
-               m_SeenCards = new Dictionary<int, List<Location>>();
+               r_Board = new Cell[i_Measurements[k_HeightIndex], i_Measurements[k_WidthIndex]];
+               r_AvailableCards = new List<Cell>();
+               r_Player1 = new Player(i_Names[0], i_PlayerTypes[0]);
+               r_Player2 = new Player(i_Names[1], i_PlayerTypes[1]);
+               r_SeenCards = new Dictionary<int, List<Location>>();
 
-               initializeBoardAndAvailableCards(io_Cards);
+               initializeBoardAndAvailableCards(i_Cards);
           }
 
-          private void initializeBoardAndAvailableCards(List<int> io_Cards)
+          private void initializeBoardAndAvailableCards(List<int> i_Cards)
           {
-               int firstDimLength = m_Board.GetLength(k_HeightIndex);
-               int secondDimLength = m_Board.GetLength(k_WidthIndex);
+               int firstDimLength = r_Board.GetLength(k_HeightIndex);
+               int secondDimLength = r_Board.GetLength(k_WidthIndex);
                Random randObj = new Random();
 
                for (int i = 0; i < firstDimLength; i++)
@@ -43,16 +43,16 @@ namespace Ex05.GameLogic
                     for (int j = 0; j < secondDimLength; j++)
                     {
                          // Randomizing a card to put in the current location on the board 
-                         int indexToAdd = randObj.Next(io_Cards.Count);
+                         int indexToAdd = randObj.Next(i_Cards.Count);
 
-                         m_Board[i, j] = new Cell(io_Cards[indexToAdd], new Location(i, j));
+                         r_Board[i, j] = new Cell(i_Cards[indexToAdd], new Location(i, j));
 
                          // Updating boolean state indicates the card is flipped 
-                         m_Board[i, j].IsFlipped = false;
-                         io_Cards.RemoveAt(indexToAdd);
+                         r_Board[i, j].IsFlipped = false;
+                         i_Cards.RemoveAt(indexToAdd);
 
                          // Initializing available cards storage
-                         this.AvailableCards.Add(m_Board[i, j]);
+                         this.AvailableCards.Add(r_Board[i, j]);
                     }
                }
           }
@@ -76,7 +76,7 @@ namespace Ex05.GameLogic
           {
                if (i_IsAMatch == true)
                {
-                    // In case there's a match we need to remove the elements tha't have been seen
+                    // In case there's a match we need to remove the elements that have been seen
                     SeenCards.Remove(i_PairOfCards[0].CellContent);
                }
                else
@@ -104,7 +104,7 @@ namespace Ex05.GameLogic
 
           public Cell GetCellByLocation(Location i_CardLocation)
           {
-               return m_Board[i_CardLocation.Row, i_CardLocation.Col];
+               return r_Board[i_CardLocation.Row, i_CardLocation.Col];
           }
 
           public bool IsThereAMatch(Player io_CurrentPlayer, params Cell[] i_Cards)
@@ -130,12 +130,7 @@ namespace Ex05.GameLogic
           {
                get
                {
-                    return m_Player1;
-               }
-
-               internal set
-               {
-                    m_Player1 = value;
+                    return r_Player1;
                }
           }
 
@@ -143,12 +138,7 @@ namespace Ex05.GameLogic
           {
                get
                {
-                    return m_Player2;
-               }
-
-               internal set
-               {
-                    m_Player2 = value;
+                    return r_Player2;
                }
           }
 
@@ -156,12 +146,7 @@ namespace Ex05.GameLogic
           {
                get
                {
-                    return m_Board;
-               }
-
-               internal set
-               {
-                    m_Board = value;
+                    return r_Board;
                }
           }
 
@@ -169,12 +154,7 @@ namespace Ex05.GameLogic
           {
                get
                {
-                    return m_AvailableCards;
-               }
-
-               internal set
-               {
-                    m_AvailableCards = value;
+                    return r_AvailableCards;
                }
           }
 
@@ -201,12 +181,7 @@ namespace Ex05.GameLogic
           {
                get
                {
-                    return m_SeenCards;
-               }
-
-               set
-               {
-                    m_SeenCards = value;
+                    return r_SeenCards;
                }
           }
 
@@ -216,9 +191,9 @@ namespace Ex05.GameLogic
                    j = io_CardToFlip.Location.Col;
 
                // Flipping Card by logic
-               m_Board[i, j].IsFlipped = !m_Board[i, j].IsFlipped;
+               r_Board[i, j].IsFlipped = !r_Board[i, j].IsFlipped;
 
-               onCardFlipped(m_Board[i, j]);
+               onCardFlipped(r_Board[i, j]);
           }
      }
 }

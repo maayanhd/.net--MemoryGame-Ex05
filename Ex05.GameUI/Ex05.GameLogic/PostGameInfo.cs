@@ -19,7 +19,7 @@ namespace Ex05.GameLogic
             m_IsADraw = i_IsADraw;
         }
 
-        public bool IsaDraw
+        public bool IsADraw
         {
             get
             {

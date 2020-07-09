@@ -27,7 +27,7 @@ namespace Ex05.GameUI
           {
                this.StartPosition = FormStartPosition.CenterScreen;
 
-               AllocateControlsOfForm();
+               allocateControlsOfForm();
 
                // m_LabelFirstPlayerName
                designLabelFirstPlayerName();
@@ -61,7 +61,7 @@ namespace Ex05.GameUI
                designForm();
           }
 
-          private void AllocateControlsOfForm()
+          private void allocateControlsOfForm()
           {
                this.m_LabelFirstPlayerName = new System.Windows.Forms.Label();
                this.m_LabelSecondPlayerName = new System.Windows.Forms.Label();
@@ -192,7 +192,7 @@ namespace Ex05.GameUI
                this.PerformLayout();
           }
 
-          private void m_ButtonStart_Click(object sender, EventArgs e)
+          private void m_ButtonStart_Click(object i_Sender, EventArgs i_E)
           {
               this.Close();               
           }
@@ -210,7 +210,7 @@ namespace Ex05.GameUI
                return areThePlayerNamesValid;
           }
 
-          private void m_ButtonAgainstSecondPlayer_Click(object sender, EventArgs e)
+          private void m_ButtonAgainstSecondPlayer_Click(object i_Sender, EventArgs i_E)
           {
                setSecondPlayerTypeButton();
                updateButtonAgainstSecondPlayerStatus();
@@ -271,14 +271,14 @@ namespace Ex05.GameUI
                o_BoardMeasurements[1] = int.Parse(m_ButtonBoardSizeOptions.Text[m_ButtonBoardSizeOptions.Text.Length - 1].ToString());
           }
 
-          protected override void OnFormClosing(FormClosingEventArgs e)
+          protected override void OnFormClosing(FormClosingEventArgs i_E)
           {
                if (arePlayerNamesValid() == false)
                {
-                    e.Cancel = true;
+                    i_E.Cancel = true;
                }
 
-               base.OnFormClosing(e);
+               base.OnFormClosing(i_E);
           }
      }
 }

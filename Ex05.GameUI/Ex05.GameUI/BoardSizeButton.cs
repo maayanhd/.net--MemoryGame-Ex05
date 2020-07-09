@@ -8,38 +8,41 @@ namespace Ex05.GameUI
 {
      public class BoardSizeButton : Button
      {
-          private List<string> m_BoardSizeOptionsStrings = new List<string>();
+          private readonly List<string> r_BoardSizeOptionsStrings = new List<string>();
           private int m_SizeBoardOptionCounter = 0;
 
           public BoardSizeButton() : base()
           {
-               FillSizesOfBoardsStrings();
+               fillSizesOfBoardsStrings();
           }
 
-          private void FillSizesOfBoardsStrings()
+          private void fillSizesOfBoardsStrings()
           {
                string rows = string.Empty, cols = string.Empty;
                string sizeOfBoardString = string.Format("{0}X{1}", rows, cols);
 
-               //Rows and cols number varies between 4 to 6
-               //An odd number of cells is not possible (since a total number made out of pairs is even)
-               for (int i = 4; i <= 6; i++)
+               // Rows and cols number varies between 4 to 6
+               // An odd number of cells is not possible (since a total number made out of pairs is even)
+               for(int i = 4; i <= 6; i++)
                {
-                    for (int j = 4; j <= 6; j++)
-                    {
-                         if ((i * j) % 2 == 0) 
-                         {
-                              m_BoardSizeOptionsStrings.Add(string.Format("{0} X {1}", i, j));
-                         }
-                    }
+                   for(int j = 4; j <= 6; j++)
+                   {
+                       if((i * j) % 2 == 0)
+                       {
+                             r_BoardSizeOptionsStrings.Add(string.Format(
+                                 "{0} X {1}",
+                                 i,
+                                 j));
+                       }
+                   }
                }
           }
 
-          protected override void OnClick(EventArgs e)
+          protected override void OnClick(EventArgs i_E)
           {
-               base.OnClick(e);
+               base.OnClick(i_E);
 
-               Text = m_BoardSizeOptionsStrings[indexOfNextBoardSizeString()];
+               Text = r_BoardSizeOptionsStrings[indexOfNextBoardSizeString()];
           }
                    
           private int indexOfNextBoardSizeString()
